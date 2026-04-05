@@ -26,7 +26,7 @@ class DatabaseConnector:
     def connect(self):
         if self.config.db_type == "mssql":
             conn_str = (
-                f"DRIVER={{ODBC Driver 17 for SQL Server}};"
+                f"DRIVER={{ODBC Driver 18 for SQL Server}};"
                 f"SERVER={self.config.host},{self.config.port or 1433};"
                 f"DATABASE={self.config.database};"
                 f"UID={self.config.username};"
