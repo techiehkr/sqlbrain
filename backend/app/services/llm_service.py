@@ -2,10 +2,10 @@ import re
 import httpx
 import json
 from typing import AsyncGenerator
+import os
 
-
-OLLAMA_BASE_URL = "http://localhost:11434"
-DEFAULT_SQL_MODEL = "llama3.1"
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+DEFAULT_SQL_MODEL = "sqlcoder"
 DEFAULT_GENERAL_MODEL = "llama3.1"
 
 
@@ -696,5 +696,9 @@ _ollama_service: OllamaService | None = None
 def get_ollama_service(model: str = DEFAULT_SQL_MODEL) -> OllamaService:
     global _ollama_service
     if _ollama_service is None or _ollama_service.sql_model != model:
-        _ollama_service = OllamaService(sql_model=model)
+        _ollama_service = OllamaService(
+            base_url=OLLAMA_BASE_URL,  
+            sql_model=model,
+            general_model=DEFAULT_GENERAL_MODEL,
+        )
     return _ollama_service

@@ -33,7 +33,7 @@ Your Database (never leaves your machine)
 
 ## 🗄️ Supported Databases
 
-- ✅ **Microsoft SQL Server** (SSMS)
+- ✅ **Microsoft SQL Server**
 - ✅ **PostgreSQL**
 - ✅ **MySQL / MariaDB**
 - ✅ **SQLite**
@@ -46,7 +46,7 @@ Your Database (never leaves your machine)
 2. **Node.js 20+**
 3. **[Ollama](https://ollama.ai)** — local LLM runtime
 
-### Option 1: One-command start
+### Option 1: One-command start (Linux/Mac)
 
 ```bash
 chmod +x start.sh
@@ -59,7 +59,8 @@ chmod +x start.sh
 ```bash
 # Install from https://ollama.ai, then:
 ollama serve
-ollama pull deepseek-coder   # Best for SQL
+ollama pull sqlcoder      # Best for SQL generation
+ollama pull llama3.1      # Best for general questions
 ```
 
 **2. Backend:**
@@ -86,21 +87,26 @@ npm run dev
 docker-compose up --build
 ```
 
-> **Note:** Ollama must still run on your host. Docker containers connect to `host.docker.internal:11434`.
+> **Important:** Ollama must run on your host machine separately — Docker containers reach it via `host.docker.internal:11434`.
+>
+> **Windows users:** Make sure SQL Server allows connections from `host.docker.internal`, not just `localhost`.
 
 ## 🤖 Recommended LLM Models
 
-| Model | Best For | Size |
-|-------|----------|------|
-| `deepseek-coder` | SQL generation (recommended) | ~7GB |
-| `codellama` | Code tasks | ~7GB |
-| `llama3` | General reasoning | ~8GB |
-| `mistral` | Lightweight, fast | ~4GB |
+| Model | Best For | Size | RAM Required |
+|-------|----------|------|-------------|
+| `sqlcoder` | SQL generation (recommended) | ~4GB | 8GB+ |
+| `llama3.1` | General questions & explanations | ~5GB | 8GB+ |
+| `gemma2` | Balanced SQL + general | ~5GB | 8GB+ |
+| `deepseek-coder` | Lightweight SQL | ~776MB | 4GB+ |
+| `mistral` | Low RAM machines | ~4GB | 6GB+ |
 
 ```bash
-ollama pull deepseek-coder   # Recommended
-ollama pull codellama         # Alternative
+ollama pull sqlcoder       # Recommended for SQL
+ollama pull llama3.1       # Recommended for general questions
 ```
+
+> **Note:** If you have less than 16GB RAM, use `deepseek-coder` for SQL and `mistral` for general questions.
 
 ## 📁 Project Structure
 
@@ -143,6 +149,7 @@ sqlbrain/
 │   │   │       └── ComplexityBadge.tsx
 │   │   ├── store/index.ts              # Zustand global state
 │   │   └── lib/api.ts                  # API client
+│   ├── next.config.js
 │   ├── package.json
 │   └── Dockerfile
 ├── docker-compose.yml
@@ -172,6 +179,13 @@ SQLBrain automatically detects:
 | `NOT IN (SELECT ...)` | Medium |
 | OR in WHERE clause | Low |
 | Multiple nested SELECTs | Info |
+
+## 🐳 Docker Notes
+
+- The backend uses **ODBC Driver 18** for SQL Server
+- Ollama runs on your **host machine**, not inside Docker
+- When connecting to SQL Server from Docker, use `host.docker.internal` as the host instead of `localhost`
+- The `OLLAMA_BASE_URL` environment variable is used to configure Ollama's address inside the container
 
 ## 🗺️ Roadmap
 
